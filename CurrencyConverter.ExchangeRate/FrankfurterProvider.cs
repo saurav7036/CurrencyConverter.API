@@ -1,5 +1,6 @@
 ﻿using CurrencyConverter.ExchangeRate.Infrastructure.Http;
 using CurrencyConverter.ExchangeRate.Interfaces;
+using CurrencyConverter.Models.Constants;
 using CurrencyConverter.Models.DTOs;
 using CurrencyConverter.Models.DTOs.Frankfurter;
 using System.Net.Http.Json;
@@ -17,7 +18,7 @@ namespace CurrencyConverter.ExchangeRate
 
         public async Task<LatestRateDto> GetLatestRatesAsync(string baseCurrency)
         {
-            var response = await _http.GetAsync("FrankfurterClient", $"latest?from={baseCurrency}");
+            var response = await _http.GetAsync(HttpClientNames.FrankfurterClient, $"latest?from={baseCurrency}");
 
             response.EnsureSuccessStatusCode();
 
@@ -37,8 +38,10 @@ namespace CurrencyConverter.ExchangeRate
         {
             var url1 = $"?from={baseCurrency}&start_date={from:yyyy-MM-dd}&end_date={to:yyyy-MM-dd}";
             var url = $"{from:yyyy-MM-dd}..{to:yyyy-MM-dd}?symbol={baseCurrency}";
-            var response = await _http.GetAsync("FrankfurterClient", url);
-            response.EnsureSuccessStatusCode();
+            
+            var response = await _http.GetAsync(HttpClientNames.FrankfurterClient, url);
+            
+           response.EnsureSuccessStatusCode();
 
             var apiResult = await response.Content.ReadFromJsonAsync<FrankfurterHistoricalApiResponse>();
             if (apiResult == null)

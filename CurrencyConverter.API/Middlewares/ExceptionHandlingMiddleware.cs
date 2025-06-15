@@ -24,6 +24,11 @@ namespace CurrencyConverter.API.Middlewares
                 _logger.LogWarning(ex, "Service exception: {ErrorCode} - {Message}", ex.ErrorCode, ex.Message);
                 await WriteErrorResponseAsync(context, ex.StatusCode, ex.ErrorCode, ex.Message);
             }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogWarning(ex, "Downstream service unavailable: {Message}", ex.Message);
+                await WriteErrorResponseAsync(context, StatusCodes.Status503ServiceUnavailable, "service_unavailable", "Downstream service unavailable:");
+            }
             catch (ArgumentException ex)
             {
                 _logger.LogWarning(ex, "Bad request: {Message}", ex.Message);
