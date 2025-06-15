@@ -1,4 +1,7 @@
-﻿using CurrencyConverter.API.ViewModels.Request;
+﻿using CurrencyConverter.API.Authorization.Attributes;
+using CurrencyConverter.API.Authorization.Filters;
+using CurrencyConverter.API.Authorization.Permissions;
+using CurrencyConverter.API.ViewModels.Request;
 using CurrencyConverter.Domain.Exceptions;
 using CurrencyConverter.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +27,9 @@ namespace CurrencyConverter.API.Controllers.v1
         }
 
         [HttpGet("latest")]
+        [Authorize]
+        [ServiceFilter(typeof(PermissionFilter))]
+        [PermissionRequirement(Resource = PermissionResources.ExchangeRate, Action = ExchangeRateActions.ViewLatest)]
         public async Task<IActionResult> GetLatestRates([FromQuery] CurrencyQueryRequest request)
         {
             request.Normalize();
@@ -36,6 +42,9 @@ namespace CurrencyConverter.API.Controllers.v1
         }
 
         [HttpPost("convert")]
+        [Authorize]
+        [ServiceFilter(typeof(PermissionFilter))]
+        [PermissionRequirement(Resource = PermissionResources.ExchangeRate, Action = ExchangeRateActions.ConvertAmount)]
         public async Task<IActionResult> ConvertCurrency([FromBody] CurrencyConversionRequest request)
         {
             if (IsBlacklisted(request.FromCurrency) || IsBlacklisted(request.ToCurrency))
@@ -53,6 +62,9 @@ namespace CurrencyConverter.API.Controllers.v1
         }
 
         [HttpGet("history")]
+        [Authorize]
+        [ServiceFilter(typeof(PermissionFilter))]
+        [PermissionRequirement(Resource = PermissionResources.ExchangeRate, Action = ExchangeRateActions.ViewHistory)]
         public async Task<IActionResult> GetHistoricalRates([FromQuery] HistoricalRatesQueryRequest request)
         {
             request.Normalize();
