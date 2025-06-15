@@ -10,5 +10,13 @@ namespace CurrencyConverter.Domain.Interfaces
            string baseCurrency,
            string targetCurrency,
            decimal amount);
+
+        Task<PagedResult<HistoricalRateDto>> GetHistoricalRatesAsync(
+            string provider,
+            string baseCurrency,
+            DateTime from,
+            DateTime to,
+            int pageNumber,
+            int pageSize);
     }
 }

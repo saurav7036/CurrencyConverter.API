@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Tests.Beh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Tests.Common", "CurrencyConver.Tests.Common\CurrencyConverter.Tests.Common.csproj", "{11546D4B-7F2C-4CAE-9D5B-0B062B8CC962}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Cache", "CurrencyConverter.Cache\CurrencyConverter.Cache.csproj", "{6894C940-2982-432A-8275-5D89754931BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{11546D4B-7F2C-4CAE-9D5B-0B062B8CC962}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11546D4B-7F2C-4CAE-9D5B-0B062B8CC962}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11546D4B-7F2C-4CAE-9D5B-0B062B8CC962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6894C940-2982-432A-8275-5D89754931BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6894C940-2982-432A-8275-5D89754931BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6894C940-2982-432A-8275-5D89754931BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6894C940-2982-432A-8275-5D89754931BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{80A3F579-0DBE-45CB-8EE1-1A9EBE652534} = {624D62E6-3078-4D3C-8847-B8A1F346DDA2}
 		{C22C42CA-4BCD-4BB5-8203-41E083B457CD} = {624D62E6-3078-4D3C-8847-B8A1F346DDA2}
 		{11546D4B-7F2C-4CAE-9D5B-0B062B8CC962} = {624D62E6-3078-4D3C-8847-B8A1F346DDA2}
+		{6894C940-2982-432A-8275-5D89754931BB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {119694E3-6DDA-446D-B1A1-18417277D926}

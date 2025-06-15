@@ -18,7 +18,7 @@ namespace CurrencyConverter.ExchangeRate
         public async Task<LatestRateDto> GetLatestRatesAsync(string baseCurrency)
         {
             var response = await _http.GetAsync("FrankfurterClient", $"latest?from={baseCurrency}");
-            
+
             response.EnsureSuccessStatusCode();
 
             var apiResult = await response.Content.ReadFromJsonAsync<FrankfurterLatestApiResponse>();
@@ -31,6 +31,27 @@ namespace CurrencyConverter.ExchangeRate
                 BaseCurrency = apiResult.Base,
                 Rates = apiResult.Rates
             };
+        }
+
+        public async Task<List<HistoricalRateDto>> GetRatesInRangeAsync(string baseCurrency, DateTime from, DateTime to)
+        {
+            var url1 = $"?from={baseCurrency}&start_date={from:yyyy-MM-dd}&end_date={to:yyyy-MM-dd}";
+            var url = $"{from:yyyy-MM-dd}..{to:yyyy-MM-dd}?symbol={baseCurrency}";
+            var response = await _http.GetAsync("FrankfurterClient", url);
+            response.EnsureSuccessStatusCode();
+
+            var apiResult = await response.Content.ReadFromJsonAsync<FrankfurterHistoricalApiResponse>();
+            if (apiResult == null)
+                throw new InvalidOperationException("Deserialization failed");
+
+            return apiResult.RatesByDate
+                .Select(kvp => new HistoricalRateDto
+                {
+                    Date = DateTime.Parse(kvp.Key),
+                    BaseCurrency = apiResult.Base,
+                    Rates = kvp.Value
+                })
+                .ToList();
         }
     }
 }

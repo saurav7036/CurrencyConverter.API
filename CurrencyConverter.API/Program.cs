@@ -1,3 +1,4 @@
+using CurrencyConverter.Cache.Configuration;
 using CurrencyConverter.Domain.Configuration;
 using CurrencyConverter.ExchangeRate.Configuration;
 using CurrencyConverter.Models.Configurations;
@@ -17,6 +18,8 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddMemoryCache();
 
 builder.Services.Configure<ExchangeRateSettings>(builder.Configuration.GetSection("ExchangeRate"));
 
@@ -43,6 +46,7 @@ static void RegisterBindings(WebApplicationBuilder builder)
 {
     ProviderBindings.Register(builder.Services, builder.Configuration);
     DomainBindings.Register(builder.Services);
+    CacheBindings.Register(builder.Services);
 }
 
 public partial class Program { }

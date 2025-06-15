@@ -1,5 +1,6 @@
 ﻿using CurrencyConverter.API.ViewModels.Request;
 using CurrencyConverter.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CurrencyConverter.API.Controllers.v1
@@ -46,6 +47,22 @@ namespace CurrencyConverter.API.Controllers.v1
                 baseCurrency: request.FromCurrency.ToUpperInvariant(),
                 targetCurrency: request.ToCurrency.ToUpperInvariant(),
                 amount: request.Amount);
+
+            return Ok(result);
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetHistoricalRates([FromQuery] HistoricalRatesQueryRequest request)
+        {
+            request.Normalize();
+
+            var result = await _currencyExchangeRateService.GetHistoricalRatesAsync(
+                provider: request.Provider,
+                baseCurrency: request.BaseCurrency,
+                from: request.StartDate,
+                to: request.EndDate,
+                pageNumber: request.PageNumber,
+                pageSize: request.PageSize);
 
             return Ok(result);
         }

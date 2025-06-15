@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CurrencyConverter.Cache\CurrencyConverter.Cache.csproj" />
     <ProjectReference Include="..\CurrencyConverter.ExchangeRate\CurrencyConverter.ExchangeRate.csproj" />
     <ProjectReference Include="..\CurrencyConverter.Models\CurrencyConverter.Models.csproj" />
   </ItemGroup>
