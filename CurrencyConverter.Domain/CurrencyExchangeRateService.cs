@@ -1,9 +1,11 @@
 ﻿using CurrencyConverter.Cache.Interfaces;
+using CurrencyConverter.Domain.Exceptions;
 using CurrencyConverter.Domain.Interfaces;
 using CurrencyConverter.ExchangeRate.Interfaces;
 using CurrencyConverter.Models.Configurations;
 using CurrencyConverter.Models.DTOs;
 using CurrencyConverter.Models.DTOs.Caching;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CurrencyConverter.Domain;
@@ -14,18 +16,21 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
     private readonly ICurrencyLatestRateCache _latestCache;
     private readonly ICurrencyHistoricalRateCache _historicalCache;
     private readonly Dictionary<string, ExchangeRateProviderOptions> _providerMetadata;
+    private readonly ILogger<CurrencyExchangeRateService> _logger;
 
     public CurrencyExchangeRateService(
         IExchangeRateProviderFactory providerFactory,
         ICurrencyLatestRateCache latestCache,
         ICurrencyHistoricalRateCache historicalCache,
-        IOptions<ExchangeRateSettings> settings)
+        IOptions<ExchangeRateSettings> settings,
+        ILogger<CurrencyExchangeRateService> logger)
     {
         _providerFactory = providerFactory;
         _latestCache = latestCache;
         _historicalCache = historicalCache;
         _providerMetadata = settings.Value.Providers
             .ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
+        _logger = logger;
     }
 
     public async Task<LatestRateDto> GetLatestRateAsync(string providerKey, string baseCurrency)
@@ -36,12 +41,17 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
         var cacheEntry = await _latestCache.TryGetAsync(providerKey, baseCurrency);
         if (cacheEntry != null && now - cacheEntry.LastApiCallUtc < TimeSpan.FromSeconds(metadata.LatestRateTtlSeconds))
         {
+            _logger.LogInformation("Returning cached latest rate for {Provider}/{BaseCurrency}. Cached at {Timestamp}", providerKey, baseCurrency, cacheEntry.LastApiCallUtc);
             return cacheEntry.Rate;
         }
+
+        _logger.LogInformation("Fetching fresh latest rates for {Provider}/{BaseCurrency} from provider", providerKey, baseCurrency);
 
         var exchangeProvider = _providerFactory.GetProvider(providerKey);
         var fresh = await exchangeProvider.GetLatestRatesAsync(baseCurrency);
         await _latestCache.SetAsync(providerKey, baseCurrency, fresh, now);
+
+        _logger.LogInformation("Cached fresh latest rates for {Provider}/{BaseCurrency} at {Timestamp}", providerKey, baseCurrency, now);
 
         return fresh;
     }
@@ -53,10 +63,18 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
         decimal amount)
     {
 
+        if(baseCurrency.Equals(targetCurrency, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new BadRequestException($"Base currency {baseCurrency} and target currency {targetCurrency} cannot be the same.");
+        }
+
         var latest = await GetLatestRateAsync(providerKey, baseCurrency);
 
         if (!latest.Rates.TryGetValue(targetCurrency, out var rate))
-            throw new InvalidOperationException($"Rate for '{targetCurrency}' not available.");
+        {
+            _logger.LogWarning("Target currency '{TargetCurrency}' not found in latest rates for base '{BaseCurrency}'", targetCurrency, baseCurrency);
+            throw new BadRequestException($"Conversion rate for '{targetCurrency}' is not available.");
+        }
 
         return new CurrencyConversionResult
         {
@@ -87,12 +105,16 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
 
         if (cacheEntry == null || cacheEntry.Rates.Count == 0)
         {
+            _logger.LogInformation("Initializing historical cache for {Provider}/{BaseCurrency}", providerKey, baseCurrency);
+
             cacheEntry = await InitializeCacheFromProvider(providerKey, baseCurrency, now, metadata, provider);
         }
         else
         {
             if (IsCacheStale(cacheEntry, now, metadata))
             {
+                _logger.LogInformation("Syncing historical cache for {Provider}/{BaseCurrency}. Last API call was at {LastCall}", providerKey, baseCurrency, cacheEntry.LastApiCallUtc);
+
                 await SyncCacheWithProvider(providerKey, baseCurrency, now, metadata, provider, cacheEntry);
             }
 
@@ -100,6 +122,9 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
         }
 
         var (totalCount, items) = GetPaginatedData(from, to, pageNumber, pageSize, cacheEntry);
+
+        _logger.LogInformation("Returning {Count} historical records for {Provider}/{BaseCurrency} between {From} and {To}", items.Count, providerKey, baseCurrency, from, to);
+
 
         return new PagedResult<HistoricalRateDto>
         {
@@ -132,6 +157,9 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
         }
 
         await _historicalCache.SetAsync(providerKey, baseCurrency, newEntry);
+
+        _logger.LogInformation("Initialized historical cache for {Provider}/{BaseCurrency} with {Count} entries", providerKey, baseCurrency, newEntry.Rates.Count);
+
         return newEntry;
     }
 
@@ -160,6 +188,9 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
 
         cacheEntry.LastApiCallUtc = now;
         await _historicalCache.SetAsync(providerKey, baseCurrency, cacheEntry);
+
+        _logger.LogInformation("Synced {Count} new historical rates into cache for {Provider}/{BaseCurrency}", fetchedRates.Count(), providerKey, baseCurrency);
+
     }
 
     private async Task EvictExpiredEntriesIfNeeded(
@@ -174,12 +205,17 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
 
         if (oldestDate < cutoff)
         {
-            foreach (var date in cacheEntry.Rates.Keys.TakeWhile(d => d < cutoff).ToList())
+            var toRemove = cacheEntry.Rates.Keys.TakeWhile(d => d < cutoff).ToList();
+
+            foreach (var date in toRemove)
             {
                 cacheEntry.Rates.Remove(date);
             }
 
             await _historicalCache.SetAsync(providerKey, baseCurrency, cacheEntry);
+
+            _logger.LogInformation("Evicted {Count} outdated entries for {Provider}/{BaseCurrency}", toRemove.Count, providerKey, baseCurrency);
+
         }
     }
 
@@ -207,13 +243,13 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
     private static void ValidateParams(DateTime from, DateTime to, DateTime now)
     {
         if (from > to)
-            throw new ArgumentException("'from' date must be before 'to' date.");
+            throw new BadRequestException("'from' date must be before 'to' date.");
 
         if ((now - from).TotalDays > 180)
-            throw new ArgumentException("Only historical data within the last 6 months is supported.");
+            throw new BadRequestException("Only historical data within the last 6 months is supported.");
 
         if (to > now)
-            throw new ArgumentException("'to' date cannot be in the future.");
+            throw new BadRequestException("'to' date cannot be in the future.");
     }
 
     private ExchangeRateProviderOptions GetProviderMetadata(string providerKey)

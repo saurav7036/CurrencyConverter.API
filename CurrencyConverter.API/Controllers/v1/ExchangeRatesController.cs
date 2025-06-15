@@ -1,4 +1,5 @@
 ﻿using CurrencyConverter.API.ViewModels.Request;
+using CurrencyConverter.Domain.Exceptions;
 using CurrencyConverter.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ namespace CurrencyConverter.API.Controllers.v1
         {
             if (IsBlacklisted(request.FromCurrency) || IsBlacklisted(request.ToCurrency))
             {
-                return BadRequest("Conversion involving TRY, PLN, THB, or MXN is not allowed.");
+                throw new BadRequestException("Conversion involving TRY, PLN, THB, or MXN is not allowed.");
             }
 
             var result = await _currencyExchangeRateService.ConvertAsync(

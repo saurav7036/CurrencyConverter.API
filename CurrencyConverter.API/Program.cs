@@ -1,14 +1,35 @@
+using CurrencyConverter.API.Filters;
+using CurrencyConverter.API.Middlewares;
 using CurrencyConverter.Cache.Configuration;
 using CurrencyConverter.Domain.Configuration;
 using CurrencyConverter.ExchangeRate.Configuration;
 using CurrencyConverter.Models.Configurations;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<ValidateModelFilter>();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
+builder.Services.AddControllers(options=>
+{
+    options.Filters.Add<ValidateModelFilter>();
+});
+
 builder.Services.AddApiVersioning(options =>
 {
     options.AssumeDefaultVersionWhenUnspecified = true;
@@ -35,7 +56,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
