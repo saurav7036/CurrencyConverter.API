@@ -9,13 +9,19 @@ A .NET 8-based RESTful API that provides real-time and historical currency conve
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/saurav7036/CurrencyConverter.API.git
-   cd CurrencyConverter.API
    ```
 
 2. **Build and Run**
-   ```bash
-   dotnet build
-   dotnet run --project CurrencyConverter.API
+   ```
+   Open `CurrencyConverter.sln` in Visual Studio.
+   Set `CurrencyConverter.API` as the **Startup Project**.
+   Press `F5` or click **Start Debugging**.
+
+	This will:
+	- Launch the API using the configured `launchSettings.json`
+	- Use `Development` environment
+	- Automatically load all configurations
+	- Open Swagger UI at `http://localhost:7225/swagger` (or as configured)
    ```
 
 3. **Access Swagger UI**
