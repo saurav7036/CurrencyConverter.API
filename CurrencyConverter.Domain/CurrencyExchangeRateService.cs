@@ -255,7 +255,7 @@ internal class CurrencyExchangeRateService : ICurrencyExchangeRateService
     private ExchangeRateProviderOptions GetProviderMetadata(string providerKey)
     {
         if (!_providerMetadata.TryGetValue(providerKey, out var metadata))
-            throw new NotSupportedException($"Provider metadata not found for '{providerKey}'.");
+            throw new BadRequestException($"Provider metadata not found for '{providerKey}'.");
 
         return metadata;
     }

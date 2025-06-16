@@ -20,7 +20,7 @@ namespace CurrencyConverter.API.Controllers
         public class TokenRequest
         {
             public string? Username { get; set; } = "test-user";
-            public Dictionary<string, bool> Permissions { get; set; } = new();
+            public Dictionary<string, bool>? Permissions { get; set; }
             public int ExpirationInSeconds { get; set; } = 15 * 60;
         }
 
@@ -44,7 +44,7 @@ namespace CurrencyConverter.API.Controllers
             );
 
             var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
-            return Ok(new { token = tokenStr });
+            return Ok(tokenStr);
         }
     }
 }
