@@ -140,7 +140,7 @@ namespace CurrencyConverter.Tests.Behavioral
                 Provider = provider,
                 FromCurrency = fromCurrency,
                 ToCurrency = toCurrency,
-                Amount = amount
+                AmountInCents = amount
             };
         }
     }

@@ -32,7 +32,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-builder.Services.AddControllers(options=>
+builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidateModelFilter>();
 });
@@ -62,8 +62,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(options => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Currency Exchange API v1");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -113,9 +116,10 @@ static void AddAuthentication(WebApplicationBuilder builder)
 
 static void AddSwagger(WebApplicationBuilder builder)
 {
-    builder.Services.AddSwaggerGen(c =>
+    builder.Services.AddSwaggerGen(options =>
     {
-        c.SwaggerDoc("v1", new() { Title = "Currency Exchange API", Version = "v1" });
+        options.EnableAnnotations();
+        options.SwaggerDoc("v1", new() { Title = "Currency Exchange API", Version = "v1" });
 
         var jwtScheme = new OpenApiSecurityScheme
         {
@@ -132,8 +136,8 @@ static void AddSwagger(WebApplicationBuilder builder)
             }
         };
 
-        c.AddSecurityDefinition(jwtScheme.Reference.Id, jwtScheme);
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        options.AddSecurityDefinition(jwtScheme.Reference.Id, jwtScheme);
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             { jwtScheme, Array.Empty<string>() }
         });

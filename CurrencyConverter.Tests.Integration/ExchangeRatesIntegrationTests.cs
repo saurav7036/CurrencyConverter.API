@@ -44,7 +44,7 @@ namespace CurrencyConverter.Tests.Integration
                 Provider = "frankfurter",
                 ToCurrency = "EUR",
                 FromCurrency = "USD",
-                Amount = 100
+                AmountInCents = 100
             };
             await AddJwtTokenHeader();
             var url = "/api/v1/exchange-rates/convert";

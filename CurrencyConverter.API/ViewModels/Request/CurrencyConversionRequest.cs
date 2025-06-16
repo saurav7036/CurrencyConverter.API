@@ -16,6 +16,6 @@ namespace CurrencyConverter.API.ViewModels.Request
         public string ToCurrency { get; set; } = default!;
 
         [Required]
-        public decimal Amount { get; set; }
+        public long AmountInCents { get; set; }
     }
 }
