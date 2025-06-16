@@ -3,6 +3,7 @@ using CurrencyConverter.API.Filters;
 using CurrencyConverter.API.Middlewares;
 using CurrencyConverter.Cache.Configuration;
 using CurrencyConverter.Domain.Configuration;
+using CurrencyConverter.ExchangeRate;
 using CurrencyConverter.ExchangeRate.Configuration;
 using CurrencyConverter.Models.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -46,6 +47,9 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddHealthChecks()
+    .AddCheck<FrankfurterHealthCheck>("External API Check");
+
 AddSwagger(builder);
 
 builder.Services.AddMemoryCache();
@@ -79,6 +83,7 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHealthChecks("/health");
 
 app.MapControllers().RequireRateLimiting("fixed");
 
@@ -94,7 +99,7 @@ static void RegisterBindings(WebApplicationBuilder builder)
 static void AddAuthentication(WebApplicationBuilder builder)
 {
     var jwtKey = builder.Configuration["Jwt:Key"];
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!));
 
     builder.Services.AddScoped<PermissionFilter>();
 

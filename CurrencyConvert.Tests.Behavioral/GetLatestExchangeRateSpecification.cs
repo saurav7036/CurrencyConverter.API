@@ -75,7 +75,6 @@ namespace CurrencyConverter.Tests.Behavioral
             await TestAuthHelper.AddJwtTokenAsync(_client, new TestAuthHelper.TestTokenRequest
             {
                 Username = "test-user",
-                Permissions = null, // No permission claim
                 ExpirationInSeconds = 100
             });
 

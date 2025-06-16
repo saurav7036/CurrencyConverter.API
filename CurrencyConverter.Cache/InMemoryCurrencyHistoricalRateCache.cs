@@ -19,7 +19,7 @@ namespace CurrencyConverter.Cache
             var key = GetCacheKey(providerKey, baseCurrency);
             if (_cache.TryGetValue(key, out HistoricalRateCacheEntry? entry))
             {
-                return Task.FromResult(entry);
+                return Task.FromResult(entry!);
             }
 
             var newEntry = new HistoricalRateCacheEntry();
@@ -38,10 +38,10 @@ namespace CurrencyConverter.Cache
 
             foreach (var rate in rates)
             {
-                entry.Rates[rate.Date] = rate;
+                entry!.Rates[rate.Date] = rate;
             }
 
-            entry.LastApiCallUtc = timestamp;
+            entry!.LastApiCallUtc = timestamp;
             _cache.Set(key, entry);
 
             return Task.CompletedTask;

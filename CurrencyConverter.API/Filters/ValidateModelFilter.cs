@@ -18,8 +18,8 @@ namespace CurrencyConverter.API.Filters
             if (!context.ModelState.IsValid)
             {
                 var errors = context.ModelState
-                    .Where(e => e.Value.Errors.Count > 0)
-                    .SelectMany(e => e.Value.Errors.Select(x => $"{e.Key}: {x.ErrorMessage}"))
+                    .Where(e => e.Value!.Errors.Count > 0)
+                    .SelectMany(e => e.Value!.Errors.Select(x => $"{e.Key}: {x.ErrorMessage}"))
                     .ToArray();
 
                 _logger.LogWarning("Model validation failed: {@Errors}", errors);

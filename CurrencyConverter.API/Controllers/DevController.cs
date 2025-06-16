@@ -28,7 +28,7 @@ namespace CurrencyConverter.API.Controllers
         public IActionResult GenerateTestToken([FromBody] TokenRequest request)
         {
             var jwtKey = _config["Jwt:Key"];
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtKey));
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtKey!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
