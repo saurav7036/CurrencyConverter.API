@@ -2,9 +2,11 @@
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CurrencyConverter.ExchangeRate.Infrastructure
 {
+    [ExcludeFromCodeCoverage]
     public static class HttpPolicyFactory
     {
         public static IAsyncPolicy<HttpResponseMessage> CreateResiliencePolicy(
