@@ -2,7 +2,7 @@ name: Build, Test, and Coverage
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, test-ci-cd ]
   pull_request:
     branches: [ master, develop ]
 
@@ -41,12 +41,32 @@ jobs:
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Generate Coverage Report
-      if: success() || failure()
       run: |
         reportgenerator \
           -reports:TestResults/**/coverage.cobertura.xml \
           -targetdir:coveragereport \
           -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+
+    - name: Install xmllint for coverage parsing
+      run: sudo apt-get install -y libxml2-utils
+
+    - name: Enforce Coverage Threshold
+      run: |
+        echo "Checking coverage threshold..."
+        COVERAGE_FILE=$(find TestResults -name "coverage.cobertura.xml" | head -n 1)
+        LINE_COVERAGE=$(xmllint --xpath "string(//coverage/@line-rate)" "$COVERAGE_FILE")
+        LINE_COVERAGE_PERCENT=$(awk "BEGIN {printf \"%.2f\", $LINE_COVERAGE * 100}")
+
+        echo "Line coverage: $LINE_COVERAGE_PERCENT%"
+        THRESHOLD=75.0
+
+        RESULT=$(awk "BEGIN {print ($LINE_COVERAGE_PERCENT >= $THRESHOLD) ? 1 : 0}")
+        if [ "$RESULT" -ne 1 ]; then
+          echo " Coverage $LINE_COVERAGE_PERCENT% is below threshold of $THRESHOLD%"
+          exit 1
+        else
+          echo " Coverage $LINE_COVERAGE_PERCENT% meets the threshold of $THRESHOLD%"
+        fi
 
     - name: Upload Coverage Report Artifact
       uses: actions/upload-artifact@v4

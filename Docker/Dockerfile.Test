@@ -1,0 +1,20 @@
+# Docker/Dockerfile.Test
+
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy the full solution and restore dependencies
+COPY . .
+RUN dotnet publish CurrencyConverter.API/CurrencyConverter.API.csproj -c Release -o /app/publish
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build /app/publish .
+
+ENV ASPNETCORE_ENVIRONMENT=Test
+ENV ASPNETCORE_URLS=http://+:80
+
+EXPOSE 80
+ENTRYPOINT ["dotnet", "CurrencyConverter.API.dll"]
