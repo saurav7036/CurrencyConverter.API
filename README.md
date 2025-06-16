@@ -9,7 +9,7 @@ A .NET 8-based RESTful API that provides real-time and historical currency conve
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/saurav7036/CurrencyConverter.API.git
-   cd currency-converter-api
+   cd CurrencyConverter.API
    ```
 
 2. **Build and Run**
@@ -19,7 +19,7 @@ A .NET 8-based RESTful API that provides real-time and historical currency conve
    ```
 
 3. **Access Swagger UI**
-   - Default URL: `http://localhost:5000/swagger`
+   - Default URL: `https://localhost:7225/swagger`
    - Use the `/api/v1/dev/token` endpoint to generate a temporary JWT token for testing purposes
 
 4. **Token Endpoint Example Payload**

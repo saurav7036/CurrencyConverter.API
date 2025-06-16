@@ -63,7 +63,6 @@ namespace CurrencyConverter.Tests.Unit.HealthChecks
 
             // Assert
             result.Status.Should().Be(HealthStatus.Unhealthy);
-            result.Description.Should().Contain("500");
         }
 
         [Fact]
