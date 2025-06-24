@@ -80,7 +80,6 @@ A .NET 8-based RESTful API that provides real-time and historical currency conve
   - Build the project
   - Run tests and generate test coverage
   - Enforce a **coverage threshold gate**
-  - Build Docker images for Test and Production environments
 
 - ✅ **Behavioral Testing for End-to-End Flow:**  
   Added **behavioral tests** that closely mimic integration tests by mocking only **external API calls**, while using **real implementations** of internal services. These tests are:
