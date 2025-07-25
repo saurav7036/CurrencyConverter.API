@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
+      - REPO_URI=996619680060.dkr.ecr.us-east-1.amazonaws.com/currency-converter-api
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker build -t $REPO_URI:$IMAGE_TAG -f Docker/Dockerfile.Production .
+  post_build:
+    commands:
+      - docker push $REPO_URI:$IMAGE_TAG
+      - echo "IMAGE_URI=$REPO_URI:$IMAGE_TAG" > imageDetail.json
+artifacts:
+  files: imageDetail.json
