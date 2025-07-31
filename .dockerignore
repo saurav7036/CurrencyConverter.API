@@ -1,0 +1,51 @@
+# .dockerignore
+
+# Test projects
+**/Tests/**
+**/Test/**
+**/*.Tests.*/**
+**/*Tests*/**
+
+# Build outputs
+**/bin
+**/obj
+**/out
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+README.md
+*.md
+docs/
+
+# CI/CD
+.github/
+buildspec.yml
+*.yml
+*.yaml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/

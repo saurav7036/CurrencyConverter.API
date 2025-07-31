@@ -4,9 +4,28 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy the full solution and restore dependencies
-COPY . .
-RUN dotnet publish CurrencyConverter.API/CurrencyConverter.API.csproj -c Release -o /app/publish
+# Copy solution file first for better caching
+COPY *.sln ./
+
+# Copy project files
+COPY CurrencyConverter.API/*.csproj ./CurrencyConverter.API/
+COPY CurrencyConverter.Models/*.csproj ./CurrencyConverter.Models/
+COPY CurrencyConverter.Domain/*.csproj ./CurrencyConverter.Domain/
+COPY CurrencyConverter.ExchangeRate/*.csproj ./CurrencyConverter.ExchangeRate/
+COPY CurrencyConverter.Cache/*.csproj ./CurrencyConverter.Cache/
+
+# Restore dependencies for main projects only (exclude test projects)
+RUN dotnet restore CurrencyConverter.API/CurrencyConverter.API.csproj
+
+# Copy the rest of the source code
+COPY CurrencyConverter.API/ ./CurrencyConverter.API/
+COPY CurrencyConverter.Models/ ./CurrencyConverter.Models/
+COPY CurrencyConverter.Domain/ ./CurrencyConverter.Domain/
+COPY CurrencyConverter.ExchangeRate/ ./CurrencyConverter.ExchangeRate/
+COPY CurrencyConverter.Cache/ ./CurrencyConverter.Cache/
+
+# Build and publish
+RUN dotnet publish CurrencyConverter.API/CurrencyConverter.API.csproj -c Release -o /app/publish --no-restore
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
