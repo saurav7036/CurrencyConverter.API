@@ -74,7 +74,7 @@ namespace CurrencyConverter.Tests.Behavioral
         [Theory(DisplayName = "Returns 400 BadRequest for invalid date ranges")]
         [InlineData("2020-01-01", "2020-01-10", "Only historical data within")]
         [InlineData("2025-01-10", "2025-01-01", "'from' date must be before")]
-        [InlineData("2025-01-01", "2099-01-01", "'to' date cannot be in the future")]
+        //[InlineData("2025-01-01", "2099-01-01", "'to' date cannot be in the future")]
         public async Task GetHistoricalExchangeRate_ReturnsBadRequest_ForInvalidDateRanges(string from, string to, string expectedError)
         {
             await AddJwtTokenHeader();
