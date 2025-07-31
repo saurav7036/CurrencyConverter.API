@@ -1,5 +1,6 @@
 using CurrencyConverter.ExchangeRate.Infrastructure.Http;
 using CurrencyConverter.Models.DTOs;
+using CurrencyConverter.Tests.Common;
 using FluentAssertions;
 using Moq;
 using System.Net;

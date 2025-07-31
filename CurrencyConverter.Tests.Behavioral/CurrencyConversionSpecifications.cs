@@ -272,38 +272,4 @@ namespace CurrencyConverter.Tests.Behavioral
 
         #endregion
     }
-
-    /// <summary>
-    /// Test data builder for creating consistent test data
-    /// </summary>
-    public class TestDataBuilder
-    {
-        public TestAuthHelper.TestTokenRequest CreateAuthTokenWith(
-            string username = "test-user",
-            Dictionary<string, bool>? permissions = null,
-            int expirationInSeconds = 100)
-        {
-            return new TestAuthHelper.TestTokenRequest
-            {
-                Username = username,
-                Permissions = permissions ?? new Dictionary<string, bool>(),
-                ExpirationInSeconds = expirationInSeconds
-            };
-        }
-
-        public object CreateConversionRequest(
-            string fromCurrency, 
-            string toCurrency, 
-            decimal amount, 
-            string provider = "frankfurter")
-        {
-            return new
-            {
-                Provider = provider,
-                FromCurrency = fromCurrency,
-                ToCurrency = toCurrency,
-                AmountInCents = amount
-            };
-        }
-    }
 }
