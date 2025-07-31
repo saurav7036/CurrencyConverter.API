@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CurrencyConver.Tests.Common\CurrencyConverter.Tests.Common.csproj" />
+    <ProjectReference Include="..\CurrencyConverter.Tests.Common\CurrencyConverter.Tests.Common.csproj" />
     <ProjectReference Include="..\CurrencyConverter.API\CurrencyConverter.API.csproj" />
   </ItemGroup>
 
