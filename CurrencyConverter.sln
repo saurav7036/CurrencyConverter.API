@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36203.30
@@ -17,9 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.ExchangeR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Tests.Integration", "CurrencyConverter.Tests.Integration\CurrencyConverter.Tests.Integration.csproj", "{80A3F579-0DBE-45CB-8EE1-1A9EBE652534}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Tests.Behavioral", "CurrencyConvert.Tests.Behavioral\CurrencyConverter.Tests.Behavioral.csproj", "{C22C42CA-4BCD-4BB5-8203-41E083B457CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Tests.Behavioral", "CurrencyConverter.Tests.Behavioral\CurrencyConverter.Tests.Behavioral.csproj", "{C22C42CA-4BCD-4BB5-8203-41E083B457CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Tests.Common", "CurrencyConver.Tests.Common\CurrencyConverter.Tests.Common.csproj", "{11546D4B-7F2C-4CAE-9D5B-0B062B8CC962}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Tests.Common", "CurrencyConverter.Tests.Common\CurrencyConverter.Tests.Common.csproj", "{11546D4B-7F2C-4CAE-9D5B-0B062B8CC962}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyConverter.Cache", "CurrencyConverter.Cache\CurrencyConverter.Cache.csproj", "{6894C940-2982-432A-8275-5D89754931BB}"
 EndProject
